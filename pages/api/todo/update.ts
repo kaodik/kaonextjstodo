@@ -1,18 +1,16 @@
-import { prisma } from '../../lib/prisma';
+import { prisma } from '../../../lib/prisma';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { title, content } = req.body;
+  const body = req.body;
+  console.log(body);
   try {
-    console.log(title);
-    await prisma.todo.create({
-      data: {
-        title,
-        content,
-      },
+    await prisma.todo.update({
+      where: { id: Number(body.id) },
+      data: { title: body.title, content: body.content },
     });
     res.status(200).json({ message: 'Todo created' });
   } catch (error) {

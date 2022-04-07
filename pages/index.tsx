@@ -58,7 +58,21 @@ const Home = ({ todos }: Todos) => {
       console.log(error);
     }
   }
-
+  async function updateTodo(data: FormData) {
+    try {
+      fetch(`/api/todo/update`, {
+        body: JSON.stringify(data),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        method: 'PUT',
+      }).then(() => {
+        setForm({ title: '', content: '', id: '' }), refreshData();
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
   async function editTodo(edId: string, edTitle: string, edContent: string) {
     edit = true;
     setForm({ id: edId, title: edTitle, content: edContent });
@@ -68,7 +82,12 @@ const Home = ({ todos }: Todos) => {
   }
   const handleSubmit = async (data: FormData) => {
     try {
-      create(data);
+      if (!edit) {
+        create(data);
+      } else {
+        updateTodo(data);
+      }
+
       console.log('summited');
     } catch (error) {
       console.log(error);
@@ -82,6 +101,7 @@ const Home = ({ todos }: Todos) => {
         onSubmit={(e) => {
           e.preventDefault();
           handleSubmit(form);
+          edit = false;
         }}
         className='w-auto min-w-[25%] max-w-min mx-auto space-y-6 flex flex-col items-stretch'
       >
